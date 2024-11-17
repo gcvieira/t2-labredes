@@ -11,4 +11,4 @@
 
 ## Parte 3
 
-TODO
+	$ sudo python3 p3_sniffer.py
