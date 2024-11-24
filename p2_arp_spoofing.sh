@@ -10,7 +10,6 @@ fi
 INTERFACE=$1
 TARGET_IP=$2
 ROUTER_IP=$3
-#TERMINAL=konsole
 
 # Habilitar IP forwarding
 echo "[*] Habilitando IP forwarding..."
