@@ -62,7 +62,7 @@ def extract_dns(data):
 # Salva o histórico em HTML
 def save_history_to_html(history, filename="history.html"):
     with open(filename, "w") as file:
-        file.write("<html><header><title>Histórico de Navegação</title></header><body><ul>")
+        file.write("<html><header><title>Historico de Navegacao</title></header><body><ul>")
         for entry in history:
             file.write(
                 f'<li>{entry["timestamp"]} - {entry["src_ip"]} - <a href="{html.escape(entry["data"])}">{html.escape(entry["data"])}</a></li>'
@@ -88,14 +88,19 @@ def run_sniffer():
                         url = extract_http(app_data)
                         if url:
                             history.append({"timestamp": datetime.now(), "src_ip": ip["src_ip"], "data": url})
-                            print(f"[HTTP] {ip['src_ip']} -> {url}")
+                            print(f"{ip['src_ip']} -> {url}")
+                    elif tcp["dest_port"] == 443:  # HTTPs
+                        url = extract_http(app_data)
+                        if url:
+                            history.append({"timestamp": datetime.now(), "src_ip": ip["src_ip"], "data": url})
+                            print(f"{ip['src_ip']} -> {url}")
                 elif ip["protocol"] == 17:  # UDP
                     udp, app_data = parse_udp(transport_data)
                     if udp["dest_port"] == 53:  # DNS
                         domain = extract_dns(app_data)
                         if domain:
                             history.append({"timestamp": datetime.now(), "src_ip": ip["src_ip"], "data": domain})
-                            print(f"[DNS] {ip['src_ip']} -> {domain}")
+                            print(f"{ip['src_ip']} -> {domain}")
     except KeyboardInterrupt:
         save_history_to_html(history)
 
