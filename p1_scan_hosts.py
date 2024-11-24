@@ -1,3 +1,5 @@
+# Guilherme Vieira e Luigi Carvalho
+
 import socket
 import struct
 import time
@@ -43,9 +45,9 @@ def send_ping(sock, addr, timeout):
     try:
         data, _ = sock.recvfrom(1024)
         end_time = time.time()
-        return (end_time - start_time) * 1000  # Retorna tempo em ms
+        return (end_time - start_time) * 1000
     except socket.timeout:
-        return None  # Sem resposta
+        return None
 
 def scan_network(network, timeout):
     active_hosts = []
@@ -60,22 +62,21 @@ def scan_network(network, timeout):
     return active_hosts
 
 if __name__ == "__main__":
-    # Recebe argumentos da linha de comando
     if len(sys.argv) != 3:
         print("Uso: python scan_hosts.py <rede/máscara> <timeout_ms>")
         sys.exit(1)
 
     network = ipaddress.ip_network(sys.argv[1], strict=False)
     timeout = int(sys.argv[2])
-    total_hosts = network.num_addresses - 2  # Exclui rede e broadcast
+    total_hosts = network.num_addresses - 2 # Exclui rede e broadcast
     start_scan = time.time()
 
     active_hosts = scan_network(network.hosts(), timeout)
     end_scan = time.time()
 
-    # Exibe resultados
-    print(f"Número de máquinas ativas: {len(active_hosts)}")
-    print(f"Número total de máquinas: {total_hosts}")
+    # Resultados
+    print(f"Numero de maquinas ativas: {len(active_hosts)}")
+    print(f"Numero total de maquinas: {total_hosts}")
     print(f"Tempo total de varredura: {end_scan - start_scan:.2f} segundos")
 
     for ip, delay in active_hosts:

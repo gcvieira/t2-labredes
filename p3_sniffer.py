@@ -1,14 +1,15 @@
+# Guilherme Vieira e Luigi Carvalho
+
 import socket
 import struct
 import html
 from datetime import datetime
 
-# Criar um socket raw
+# Cria um socket raw para usar como sniffer
 def create_sniffer():
     sniffer = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(0x0003))
     return sniffer
 
-# Analisar cabeçalho Ethernet
 def parse_ethernet(data):
     dest_mac, src_mac, proto = struct.unpack("!6s6sH", data[:14])
     return {
@@ -17,24 +18,21 @@ def parse_ethernet(data):
         "proto": socket.htons(proto),
     }, data[14:]
 
-# Analisar cabeçalho IP
 def parse_ip(data):
     ip_header = struct.unpack("!BBHHHBBH4s4s", data[:20])
     src_ip = socket.inet_ntoa(ip_header[8])
     dest_ip = socket.inet_ntoa(ip_header[9])
     return {"src_ip": src_ip, "dest_ip": dest_ip, "protocol": ip_header[6]}, data[20:]
 
-# Analisar cabeçalho TCP
 def parse_tcp(data):
     tcp_header = struct.unpack("!HHLLHHHH", data[:20])
     return {"src_port": tcp_header[0], "dest_port": tcp_header[1]}, data[20:]
 
-# Analisar cabeçalho UDP
 def parse_udp(data):
     udp_header = struct.unpack("!HHHH", data[:8])
     return {"src_port": udp_header[0], "dest_port": udp_header[1]}, data[8:]
 
-# Extrair pacotes HTTP
+# Extrai pacotes HTTP
 def extract_http(data):
     try:
         http_data = data.decode("utf-8", errors="ignore")
@@ -47,7 +45,7 @@ def extract_http(data):
         pass
     return None
 
-# Extrair pacotes DNS
+# Extrai pacotes DNS
 def extract_dns(data):
     try:
         query_name = []
@@ -61,7 +59,7 @@ def extract_dns(data):
         pass
     return None
 
-# Salvar histórico em HTML
+# Salva o histórico em HTML
 def save_history_to_html(history, filename="history.html"):
     with open(filename, "w") as file:
         file.write("<html><header><title>Histórico de Navegação</title></header><body><ul>")
@@ -70,9 +68,9 @@ def save_history_to_html(history, filename="history.html"):
                 f'<li>{entry["timestamp"]} - {entry["src_ip"]} - <a href="{html.escape(entry["data"])}">{html.escape(entry["data"])}</a></li>'
             )
         file.write("</ul></body></html>")
-    print(f"Histórico salvo em {filename}")
+    print(f"Historico salvo em {filename}")
 
-# Sniffer principal
+
 def run_sniffer():
     sniffer = create_sniffer()
     history = []
